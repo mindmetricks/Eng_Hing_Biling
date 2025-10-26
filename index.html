@@ -151,13 +151,13 @@
       type: jsPsychInstructions,
       pages: [
       'Welcome to the Experiment.',
-      'There are 3 blocks of varying number of trials in total.',
+      'There are 3 blocks of varying numbers of trials in total.',
       'In each trial, you will need to decide if the given stimuli are real words or non-words.',
       'To respond: Press "f" for real (valid) words and "j" for non-words.',
       'Each word or non-word will only appear briefly, and you must respond before the next trial begins.',
       'If you miss a response, do not worry—focus on the upcoming trial.',
       'The experiment aims to analyse how quickly and with what accuracy you respond to the stimuli.',
-      'Once the experiment ends, your responses will be downloaded as a csv File.',
+      'Once the experiment ends, your responses will be downloaded as a CSV file.',
       'When you are ready, press any key to start the experiment.'
       ],
       show_clickable_nav: true
@@ -179,32 +179,66 @@
         const blockInstructions = {
         'A': {
             pages: [
-            `<h2>Block 1</h2><p>In this block, you will see a series of valid and invalid english words. Respond by pressing "f" for valid words and "j" for invalid words.</p>`,
+            `<h2>Block 1</h2><p>In this block, you will see a series of valid and invalid English words. Respond by pressing "f" for valid words and "j" for invalid words.</p>`,
             `<p>Remember: "f" = valid, "j" = invalid. Try to respond as quickly as possible.</p>`,
             `<p>Press any key when you're ready to begin.</p>`
             ]
         },
 
         
-        'D': {
+        'B': {
             pages: [
-            `<h2>Block 2</h2><p>This block contains valid and invalid words  in transliterated Hindi. Respond as before: "f" for valid and "j" for invalid.</p>`,
-            `<p>The Hindi words are no longer in their native script, but have been transliterated to Roman script</p>`,
-            `<p>The tranliterated hindi word is valid if it sound like a real word in Hindi, else it is invalid</p>`,
-            `<p>For example, the word घर can appear as ghar, and this is to be considered as valid.</p>`,
-            `<p> However, the word hisarat sounds like no real word  in hindi , and is hence invalid.</p>`,
+            `<h2>Block 2</h2><p>In this block, you will see a series of valid and invalid Hindi words. Respond by pressing "f" for valid words and "j" for invalid words.</p>`,
+            `<p>Remember: "f" = valid, "j" = invalid. Try to respond as quickly as possible.</p>`,
             `<p>Press any key when you're ready to begin.</p>`
             ]
         },
 
+        'C': {
+            pages: [
+            `<h2>Block 3</h2><p>This block contains valid and invalid words  in transliterated English. Respond as before: "f" for valid and "j" for invalid.</p>`,
+            `<p>The English words are no longer in their native script, but have been transliterated to Devnagiri script</p>`,
+            `<p>The transliterated English word is valid if it sounds like a real word in English, else it is invalid</p>`,
+            `<p>For example, the word finger can appear as फिंगर, and this is to be considered as valid.</p>`,
+            `<p> However, the word स्टैमेनड sounds like no real word  in English, and is hence invalid.</p>`,
+            `<p>Press any key when you're ready to begin.</p>`
+            ]
+        },
+
+        'D': {
+            pages: [
+            `<h2>Block 4</h2><p>This block contains valid and invalid words  in transliterated Hindi. Respond as before: "f" for valid and "j" for invalid.</p>`,
+            `<p>The Hindi words are no longer in their native script, but have been transliterated to Roman script</p>`,
+            `<p>The transliterated Hindi word is valid if it sounds like a real word in Hindi, else it is invalid</p>`,
+            `<p>For example, the word घर can appear as ghar, and this is to be considered as valid.</p>`,
+            `<p> However, the word hisarat sounds like no real word  in Hindi, and is hence invalid.</p>`,
+            `<p>Press any key when you're ready to begin.</p>`
+            ]
+        },
+
+          
         'E': {
             pages: [
-            `<h2>Block 3</h2><p>This block contains valid and invalid words in English and Hindi mixed together. Respond as before: "f" for valid and "j" for invalid.</p>`,
+            `<h2>Block 5</h2><p>This block contains valid and invalid words in English and Hindi mixed together. Respond as before: "f" for valid and "j" for invalid.</p>`,
+            `<p>A word is valid if it sounds like a real word in any of the two languages, English or Hindi, else it is invalid</p>`,
+            `<p>Press any key when you're ready to begin.</p>`
+            ]
+        },
+
+        'F': {
+            pages: [
+            `<h2>Block 6</h2><p>This block contains valid and invalid words in English and Hindi mixed together. Respond as before: "f" for valid and "j" for invalid.</p>`,
             `<p>The Hindi words are no longer in their native script, but have been transliterated to Roman script</p>`,
-            `<p>The tranliterated hindi word is valid if it sound like a real word in Hindi, else it is invalid</p>`,
-            `<p>For example, the word घर can appear as ghar, and this is to be considered as valid.</p>`,
-            `<p> However, the word ashkar sounds like no real word either in hindi or english, and is hence invalid.</p>`,
-            `<p> For the english words, the task is same as earlier. If it is a real english word, it's valid, else it is invalid.</p>`,
+            `<p>A word is valid if it sounds like a real word in any of the two languages, English or Hindi, else it is invalid</p>`,
+            `<p>Press any key when you're ready to begin.</p>`
+            ]
+        },
+
+        'G': {
+            pages: [
+            `<h2>Block 7</h2><p>This block contains valid and invalid words in English and Hindi mixed together. Respond as before: "f" for valid and "j" for invalid.</p>`,
+            `<p>The English words are no longer in their native script, but have been transliterated to Devnagiri script</p>`,
+            `<p>A word is valid if it sounds like a real word in any of the two languages, English or Hindi, else it is invalid</p>`,
             `<p>Press any key when you're ready to begin.</p>`
             ]
         },
@@ -212,7 +246,7 @@
         };
 
 
-    Papa.parse("FINAL_FINAL_1st.csv", {
+    Papa.parse("Fines.csv", {
     download: true,
     header: true,
     complete: function(results) {
@@ -221,10 +255,6 @@
         startExperiment(results.data);
     }
   });
-
-
-
-
 
 
     function startExperiment(wordsData) {
@@ -254,9 +284,13 @@
 
     // Define how many words to take from each subblock in each block
     const subblockWordCounts = {
-        'A': { 1: 50, 2: 50 }, // 200 words in total for block A
-        'D': { 1: 100, 2: 100  }, // 200 words in total for block D
-        'E': { 1: 100, 2: 100, 3 : 100 , 4 : 100 }                  // 400 words in total for block E
+        'A': { 3: 50, 7: 50 },           // 100 words in total for block A
+        'B': { 1: 50, 5: 50  },          // 100 words in total for block B
+        'C': { 4: 50, 8: 50 }            // 100 words in total for block C
+        'D': { 2: 50, 6: 50 },           // 100 words in total for block D
+        'E': { 1: 50, 5: 50, 3 : 50 , 7 : 50 }                  // 200 words in total for block E
+        'F': { 2: 50, 6: 50, 3 : 50 , 7 : 50 }                  // 200 words in total for block F
+        'G': { 1: 50, 5: 50, 4 : 50 , 8 : 50 }                  // 200 words in total for block G
     };
 
     // Iterate over each block
