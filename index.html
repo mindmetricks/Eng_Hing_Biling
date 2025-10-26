@@ -109,7 +109,7 @@
         <label for="speaking_hindi">How comfortable are you speaking Hindi? (1 - Not at all, 5 - Very comfortable)</label><br>
         <input type="number" id="speaking_hindi" name="speaking_hindi" min="1" max="5" required><br><br>
 
-        <label for="understanding_hindi">How comfortable are you understanding spoken Hindi? (1 - Not at all, 5 - Very comfortable)</label><br>
+        <label for="understanding_hindi">How comfortable are you in understanding spoken Hindi? (1 - Not at all, 5 - Very comfortable)</label><br>
         <input type="number" id="understanding_hindi" name="understanding_hindi" min="1" max="5" required><br><br>
 
         <!-- English Proficiency Questions -->
@@ -123,7 +123,7 @@
         <label for="speaking_english">How comfortable are you speaking English? (1 - Not at all, 5 - Very comfortable)</label><br>
         <input type="number" id="speaking_english" name="speaking_english" min="1" max="5" required><br><br>
 
-        <label for="understanding_english">How comfortable are you understanding spoken English? (1 - Not at all, 5 - Very comfortable)</label><br>
+        <label for="understanding_english">How comfortable are you in understanding spoken English? (1 - Not at all, 5 - Very comfortable)</label><br>
         <input type="number" id="understanding_english" name="understanding_english" min="1" max="5" required><br><br>
     `,
     on_finish: function(data) {
@@ -151,7 +151,7 @@
       type: jsPsychInstructions,
       pages: [
       'Welcome to the Experiment.',
-      'There are 3 blocks of varying numbers of trials in total.',
+      'There are 7 blocks of varying numbers of trials in total.',
       'In each trial, you will need to decide if the given stimuli are real words or non-words.',
       'To respond: Press "f" for real (valid) words and "j" for non-words.',
       'Each word or non-word will only appear briefly, and you must respond before the next trial begins.',
@@ -266,7 +266,7 @@
     wordsData.forEach(row => {
     console.log("Row Data:", row); // Debugging: check row values
 
-    if (!row.BLOCK || !row.SUBBLOCK || !row.WORD) {
+    if (!row.BLOCK || !row.Listing || !row.Word) {
         console.error("Missing Data in Row:", row); // Log error
         return; // Skip undefined rows
     }
@@ -286,11 +286,11 @@
     const subblockWordCounts = {
         'A': { 3: 50, 7: 50 },           // 100 words in total for block A
         'B': { 1: 50, 5: 50  },          // 100 words in total for block B
-        'C': { 4: 50, 8: 50 }            // 100 words in total for block C
+        'C': { 4: 50, 8: 50 },           // 100 words in total for block C
         'D': { 2: 50, 6: 50 },           // 100 words in total for block D
-        'E': { 1: 50, 5: 50, 3 : 50 , 7 : 50 }                  // 200 words in total for block E
-        'F': { 2: 50, 6: 50, 3 : 50 , 7 : 50 }                  // 200 words in total for block F
-        'G': { 1: 50, 5: 50, 4 : 50 , 8 : 50 }                  // 200 words in total for block G
+        'E': { 1: 50, 5: 50, 3 : 50 , 7 : 50 },                  // 200 words in total for block E
+        'F': { 2: 50, 6: 50, 3 : 50 , 7 : 50 },                  // 200 words in total for block F
+        'G': { 1: 50, 5: 50, 4 : 50 , 8 : 50 },                  // 200 words in total for block G
     };
 
     // Iterate over each block
