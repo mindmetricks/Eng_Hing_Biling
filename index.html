@@ -8,7 +8,7 @@
   <!-- Load jsPsych -->
   <script src="jspsych/jspsych.js"></script>
   <script src="jspsych/plugin-html-keyboard-response.js"></script>
-  <script src="jspsych/plugin-survey-html-form.js"></script> <!-- For the demographics form -->
+  <script src="jspsych/plugin-survey-html-form.js"></script>
   <script src="jspsych/plugin-instructions.js"></script>
   <link rel="stylesheet" href="jspsych/jspsych.css">
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
@@ -16,52 +16,40 @@
   <style>
     body {
       font-size: 24px;
-      padding-top: 50px; /* Add margin at the top for the instruction */
-    }
-    #jspsych-target {
-      font-size: 24px;
-    }
-    h1, h2, h3, p {
-      font-size: 24px;
+      padding-top: 50px;
     }
     .jspsych-content {
       font-size: 25px;
       text-align: center;
     }
-
-    /* Style for the instruction at the top */
     #instruction {
       font-size: 20px;
       text-align: center;
       position: fixed;
-      top: 10px; /* Positioned 10px from the top of the screen */
+      top: 10px;
       left: 0;
       width: 100%;
       padding: 10px 0;
-      background-color: rgba(255, 255, 255, 0.8); /* Light background */
+      background-color: rgba(255, 255, 255, 0.8);
       border-bottom: 2px solid #000;
-      z-index: 100; /* Ensure it is always on top */
+      z-index: 100;
     }
   </style>
 </head>
+
 <body>
-
-  <!-- Instruction at the top -->
-  <div id="instruction">
-     "f" : valid _and_ "j" : invalid
-  </div>
-
+  <div id="instruction">"f" : valid &nbsp;&nbsp;&nbsp; "j" : invalid</div>
   <div id="jspsych-target"></div>
-  
+
   <script>
     // Initialize jsPsych
     const jsPsych = initJsPsych({
       on_finish: function() {
-          saveData();
+        saveData();
       }
     });
 
-    // Function to save data
+    // Save data as CSV at the end
     function saveData() {
       const csvData = jsPsych.data.get().csv();
       const blob = new Blob([csvData], { type: 'text/csv' });
@@ -71,8 +59,7 @@
       link.click();
     }
 
-
-    // Define the timeline
+    // Main timeline
     let timeline = [];
 
     // Define demographics form with additional proficiency questions
@@ -145,38 +132,36 @@
     };  
     timeline.push(demographics_form);
 
-
-    // Instructions
+    // General Instructions
     const instructions = {
       type: jsPsychInstructions,
       pages: [
-      'Welcome to the Experiment.',
-      'There are 7 blocks of varying numbers of trials in total.',
-      'In each trial, you will need to decide if the given stimuli are real words or non-words.',
-      'To respond: Press "f" for real (valid) words and "j" for non-words.',
-      'Each word or non-word will only appear briefly, and you must respond before the next trial begins.',
-      'If you miss a response, do not worry—focus on the upcoming trial.',
-      'The experiment aims to analyse how quickly and with what accuracy you respond to the stimuli.',
-      'Once the experiment ends, your responses will be downloaded as a CSV file.',
-      'When you are ready, press any key to start the experiment.'
+        'Welcome to the Experiment.',
+        'There are 7 blocks of varying numbers of trials in total.',
+        'In each trial, you will need to decide if the given stimuli are real words or non-words.',
+        'To respond: Press "f" for real (valid) words and "j" for non-words.',
+        'Each word or non-word will only appear briefly, and you must respond before the next trial begins.',
+        'If you miss a response, do not worry—focus on the upcoming trial.',
+        'The experiment aims to analyse how quickly and with what accuracy you respond to the stimuli.',
+        'Once the experiment ends, your responses will be downloaded as a CSV file.',
+        'When you are ready, press any key to start the experiment.'
       ],
       show_clickable_nav: true
     };
     timeline.push(instructions);
 
-    // Wait for 2 seconds
-    const wait_two_seconds = {
+    // “Get ready” message
+    timeline.push({
       type: jsPsychHtmlKeyboardResponse,
       stimulus: '<p>Get ready...</p>',
-      choices: "NO_KEYS", // Updated to string "NO_KEYS"
-      trial_duration: 1000 // 1000 ms = 2 seconds
-    };
-    timeline.push(wait_two_seconds);
+      choices: "NO_KEYS",
+      trial_duration: 2000
+    });
 
 
 
-      // Define instructions for each block
-        const blockInstructions = {
+     // Define instructions for each block
+     const blockInstructions = {
         'A': {
             pages: [
             `<h2>Block 1</h2><p>In this block, you will see a series of valid and invalid English words. Respond by pressing "f" for valid words and "j" for invalid words.</p>`,
@@ -243,176 +228,125 @@
             ]
         },
        
-        };
-
-
-    Papa.parse("Fines.csv", {
-    download: true,
-    header: true,
-    complete: function(results) {
-        console.log("Parsed Data:", results.data); 
-        const wordsData = results.data;
-        startExperiment(results.data);
-    }
-  });
-
-
-    function startExperiment(wordsData) {
-    const blocks = {};
-
-    // Organize words by block and subblock
-
-
-    wordsData.forEach(row => {
-    console.log("Row Data:", row); // Debugging: check row values
-
-    if (!row.BLOCK || !row.Listing || !row.Word) {
-        console.error("Missing Data in Row:", row); // Log error
-        return; // Skip undefined rows
-    }
-
-    if (!blocks[row.BLOCK]) {
-        blocks[row.BLOCK] = {};
-    }
-    if (!blocks[row.BLOCK][row.SUBBLOCK]) {
-        blocks[row.BLOCK][row.SUBBLOCK] = [];
-    }
-    blocks[row.BLOCK][row.SUBBLOCK].push(row);
-});
-
-    let usedWords = new Set();
-
-    // Define how many words to take from each subblock in each block
-    const subblockWordCounts = {
-        'A': { 3: 50, 7: 50 },           // 100 words in total for block A
-        'B': { 1: 50, 5: 50  },          // 100 words in total for block B
-        'C': { 4: 50, 8: 50 },           // 100 words in total for block C
-        'D': { 2: 50, 6: 50 },           // 100 words in total for block D
-        'E': { 1: 50, 5: 50, 3 : 50 , 7 : 50 },                  // 200 words in total for block E
-        'F': { 2: 50, 6: 50, 3 : 50 , 7 : 50 },                  // 200 words in total for block F
-        'G': { 1: 50, 5: 50, 4 : 50 , 8 : 50 },                  // 200 words in total for block G
     };
 
-    // Iterate over each block
-    Object.keys(blocks).forEach(block => {
-        if (blockInstructions[block]) {
-            timeline.push({
-                type: jsPsychInstructions,
-                pages: blockInstructions[block].pages,
-                show_clickable_nav: true
-            });
-        }
-
-        let blockWords = []; // Store all selected words for this block
-
-        Object.keys(blocks[block]).forEach(subblock => {
-            const requiredWords = subblockWordCounts[block][subblock];
-
-            // Filter out words that have already been used
-            const filteredWords = blocks[block][subblock].filter(word => !usedWords.has(word.WORD));
-
-            // Shuffle and select required words
-            const shuffledWords = jsPsych.randomization.shuffle(filteredWords);
-            const selectedWords = shuffledWords.slice(0, requiredWords);
-
-            selectedWords.forEach(word => usedWords.add(word.WORD));
-
-            // Add selected words to the block list
-            blockWords.push(...selectedWords);
-        });
-
-        // **Shuffle all words within the block before displaying**
-        blockWords = jsPsych.randomization.shuffle(blockWords);
-
-
-    // Fixation cross trial
-    const fixation_cross = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: '<p>+</p>',
-        choices: "NO_KEYS",
-        trial_duration: 900  // 1 second fixation cross
-      };
-    timeline.push(fixation_cross);
-
-    blockWords.forEach((word, index) => {
-      let trial_type = 'switch';
-      if (index > 0 && word.TYPE === blockWords[index - 1].TYPE) {
-        trial_type = 'non-switch';
+    // Load word list
+    Papa.parse("Fines.csv", {
+      download: true,
+      header: true,
+      complete: function(results) {
+        console.log("Parsed CSV:", results.data);
+        startExperiment(results.data);
       }
-
-      // Word display trial with fixed 1.5 second stimulus duration
-      const word_trial = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: `<p>${word.WORD}</p>`,
-        choices: ['f', 'j'],
-        trial_duration: 1300,    // 1.3 seconds stimulus duration
-        response_ends_trial: false, // Do not end the trial immediately after response
-        data: {
-          word: word.WORD,
-          validity: word.VALIDITY,
-          type: word.TYPE,
-          block: word.BLOCK,
-          the_trial_type: trial_type
-        },
-
-
-        on_finish: function(data) {
-        console.log('Word:', data.word);             // Logs the word presented
-        console.log('Validity:', data.validity);     // Logs validity ('valid' or 'invalid')
-        console.log('Response:', data.response);     // Logs the key response ('f' or 'j')
-        console.log('RT:', data.rt);                 // Logs reaction time
-        data.correct = (data.validity === 'word' && data.response === 'f') ||
-                        (data.validity === 'non_word' && data.response === 'j');
-        console.log('Correct:', data.correct);       // Logs whether the response was correct
-        }
-
-
-      };
-      timeline.push(word_trial);
-
-      const fixation_cross = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: '<p>+</p>',
-        choices: "NO_KEYS",
-        trial_duration: 900  // 1 second fixation cross
-      };
-      timeline.push(fixation_cross);
-
-
     });
 
-    // Wait for 2 seconds
-    const wait_ten_seconds = {
-    type: jsPsychHtmlKeyboardResponse,
-    stimulus: '<p>Take a  break! </p>',
-    choices: "NO_KEYS", // Updated to string "NO_KEYS"
-    trial_duration: 10000 // 10000 ms = 10 seconds
-    };
-    timeline.push(wait_ten_seconds);
+    function startExperiment(wordsData) {
+      // Group by Listing
+      const listings = {};
+      wordsData.forEach(row => {
+        const listNum = row.Listing?.trim();
+        if (!listNum || !row.Word) return;
+        if (!listings[listNum]) listings[listNum] = [];
+        listings[listNum].push(row);
+      });
 
-    // Add a break after each block
-    const block_break = {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: '<p>Once you are ready, press any key to proceed to the next block.</p>',
-      choices: "ALL_KEYS"
-    };
-    timeline.push(block_break);
+      // Define block composition
+      const blockListingMap = {
+        'A': [3, 7],
+        'B': [1, 5],
+        'C': [4, 8],
+        'D': [2, 6],
+        'E': [1, 3, 5, 7],
+        'F': [2, 3, 6, 7],
+        'G': [1, 4, 5, 8]
+      };
 
-  });
+      // Words per listing
+      const listingWordCounts = { 1:50, 2:50, 3:50, 4:50, 5:50, 6:50, 7:50, 8:50 };
+      const usedWords = new Set();
 
-  // End of experiment message
-  const thank_you = {
-    type: jsPsychHtmlKeyboardResponse,
-    stimulus: '<p>Thank you for completing the experiment. Press any key to exit.</p>',
-    choices: "ALL_KEYS"
-  };
-  timeline.push(thank_you);
+      // Loop through each block
+      Object.keys(blockListingMap).forEach(block => {
+        // Add instructions
+        timeline.push({
+          type: jsPsychInstructions,
+          pages: blockInstructions[block].pages,
+          show_clickable_nav: true
+        });
 
-  // Run the experiment
-  jsPsych.run(timeline);
-}
+        let blockWords = [];
 
-    
+        blockListingMap[block].forEach(listNum => {
+          let available = (listings[listNum] || []).filter(w => !usedWords.has(w.Word));
+          available = jsPsych.randomization.shuffle(available);
+          const selected = available.slice(0, listingWordCounts[listNum]);
+          selected.forEach(w => usedWords.add(w.Word));
+          blockWords.push(...selected);
+        });
+
+        // Shuffle within block
+        blockWords = jsPsych.randomization.shuffle(blockWords);
+
+        // Fixation before block
+        timeline.push({
+          type: jsPsychHtmlKeyboardResponse,
+          stimulus: '<p>+</p>',
+          choices: "NO_KEYS",
+          trial_duration: 900
+        });
+
+        // Word presentation
+        blockWords.forEach((word, i) => {
+          const prevType = i > 0 ? blockWords[i - 1].Language : null;
+          const trialType = (prevType && prevType === word.Language) ? "non-switch" : "switch";
+
+          timeline.push({
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: `<p>${word.Word}</p>`,
+            choices: ['f', 'j'],
+            trial_duration: 1300,
+            response_ends_trial: false,
+            data: {
+              word: word.Word,
+              validity: word.Validity,
+              type: word.Language,
+              block: block,
+              trial_type: trialType
+            },
+            on_finish: function(data) {
+              data.correct =
+                (data.validity === 'word' && data.response === 'f') ||
+                (data.validity === 'non_word' && data.response === 'j');
+            }
+          });
+
+          // Fixation between trials
+          timeline.push({
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: '<p>+</p>',
+            choices: "NO_KEYS",
+            trial_duration: 900
+          });
+        });
+
+        // Break between blocks
+        timeline.push({
+          type: jsPsychHtmlKeyboardResponse,
+          stimulus: '<p>Take a short break!<br>Press any key to continue.</p>',
+          choices: "ALL_KEYS"
+        });
+      });
+
+      // End message
+      timeline.push({
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '<p>Thank you for participating!<br>Your data will now download automatically.<br>Press any key to exit.</p>',
+        choices: "ALL_KEYS"
+      });
+
+      // Run experiment
+      jsPsych.run(timeline);
+    }
   </script>
 </body>
 </html>
